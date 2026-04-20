@@ -10,6 +10,7 @@ using WebApi.Test.InlineData;
 using Xunit;
 
 namespace WebApi.Test.Recipe.Filter;
+
 public class FilterRecipeTest : MyRecipeBookClassFixture
 {
     private const string METHOD = "recipe/filter";
@@ -48,9 +49,9 @@ public class FilterRecipeTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         responseData.RootElement.GetProperty("recipes").EnumerateArray().Should().NotBeNullOrEmpty();
     }
@@ -81,9 +82,9 @@ public class FilterRecipeTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         var errors = responseData.RootElement.GetProperty("errors").EnumerateArray();
 

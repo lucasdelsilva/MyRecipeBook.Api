@@ -8,6 +8,7 @@ using WebApi.Test.InlineData;
 using Xunit;
 
 namespace WebApi.Test.Token.UseRefreshToken;
+
 public class GetNewAccessTokenTest : MyRecipeBookClassFixture
 {
     private const string METHOD = "token";
@@ -31,9 +32,9 @@ public class GetNewAccessTokenTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         responseData.RootElement.GetProperty("accessToken").GetString().Should().NotBeNullOrWhiteSpace();
         responseData.RootElement.GetProperty("refreshToken").GetString().Should().NotBeNullOrWhiteSpace();
@@ -52,9 +53,9 @@ public class GetNewAccessTokenTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         var errors = responseData.RootElement.GetProperty("errors").EnumerateArray();
 

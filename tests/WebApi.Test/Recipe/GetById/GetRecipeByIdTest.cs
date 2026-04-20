@@ -9,6 +9,7 @@ using WebApi.Test.InlineData;
 using Xunit;
 
 namespace WebApi.Test.Recipe.GetById;
+
 public class GetRecipeByIdTest : MyRecipeBookClassFixture
 {
     private const string METHOD = "recipe";
@@ -33,9 +34,9 @@ public class GetRecipeByIdTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         responseData.RootElement.GetProperty("id").GetString().Should().Be(_recipeId);
         responseData.RootElement.GetProperty("title").GetString().Should().Be(_recipeTitle);
@@ -53,9 +54,9 @@ public class GetRecipeByIdTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         var errors = responseData.RootElement.GetProperty("errors").EnumerateArray();
 

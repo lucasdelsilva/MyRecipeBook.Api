@@ -9,6 +9,7 @@ using WebApi.Test.InlineData;
 using Xunit;
 
 namespace WebApi.Test.Recipe.Register;
+
 public class RegisterRecipeTest : MyRecipeBookClassFixture
 {
     private const string METHOD = "recipe";
@@ -31,9 +32,9 @@ public class RegisterRecipeTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         responseData.RootElement.GetProperty("title").GetString().Should().Be(request.Title);
         responseData.RootElement.GetProperty("id").GetString().Should().NotBeNullOrWhiteSpace();
@@ -52,9 +53,9 @@ public class RegisterRecipeTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         var errors = responseData.RootElement.GetProperty("errors").EnumerateArray();
 

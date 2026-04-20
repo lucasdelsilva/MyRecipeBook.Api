@@ -5,6 +5,7 @@ using System.Text.Json;
 using Xunit;
 
 namespace WebApi.Test.Dashboard;
+
 public class GetDashboardTest : MyRecipeBookClassFixture
 {
     private const string METHOD = "dashboard";
@@ -25,9 +26,9 @@ public class GetDashboardTest : MyRecipeBookClassFixture
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        await using var responseBody = await response.Content.ReadAsStreamAsync();
+        await using var responseBody = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var responseData = await JsonDocument.ParseAsync(responseBody);
+        var responseData = await JsonDocument.ParseAsync(responseBody, cancellationToken: TestContext.Current.CancellationToken);
 
         responseData.RootElement.GetProperty("recipes").GetArrayLength().Should().BeGreaterThan(0);
     }
